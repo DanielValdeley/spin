@@ -1,0 +1,60 @@
+# 1 "pe-bidirecional.pml"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 31 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 32 "<command-line>" 2
+# 1 "pe-bidirecional.pml"
+mtype = {ack, data}
+
+
+
+
+
+chan c1 = [1] of {mtype, bit}
+chan c2 = [1] of {mtype, bit}
+
+
+
+active proctype transmissor() {
+  bit seq=0
+  bit num
+
+  ocioso:
+    c1!data,seq ->
+    printf("transmissor transmitiu msg %d\n", seq)
+
+  espera:
+  do
+  :: c2?ack,num ->
+     skip
+  :: c2?ack,eval(seq) ->
+      printf("transmissor recebeu ack %d\n", seq)
+      seq = ! seq
+      goto ocioso
+  :: c2?ack,eval(!seq) ->
+      printf("transmissor recebeu ack incorreto: %d\n", !seq)
+      skip
+
+  :: timeout ->
+     printf("retransmitiu data %d\n", seq)
+     c1!data,seq
+  od
+}
+
+active proctype receptor() {
+  bit seq=0
+  bit num
+
+  do
+  :: c1?data,num ->
+     skip
+  :: c1?data,eval(seq) ->
+     printf("receptor recebeu data %d\n", seq)
+     c2!ack,seq
+     seq = ! seq
+  :: c1?data,eval(!seq) ->
+     printf("receptor recebeu data duplicado %d\n", !seq)
+     c2!ack,!seq
+  od
+}
