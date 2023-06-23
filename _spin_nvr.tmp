@@ -1,0 +1,18 @@
+never formula {    /* !(<> ((count==10))) */
+accept_init:
+T0_init:
+	do
+	:: (! (((count==10)))) -> goto T0_init
+	od;
+}
+never repete {    /* !([] (<> ((count==10)))) */
+T0_init:
+	do
+	:: (! (((count==10)))) -> goto accept_S4
+	:: (1) -> goto T0_init
+	od;
+accept_S4:
+	do
+	:: (! (((count==10)))) -> goto accept_S4
+	od;
+}

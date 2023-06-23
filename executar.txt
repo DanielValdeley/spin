@@ -1,0 +1,8 @@
+./spin -a m1.pml
+!gcc
+./pan -a -N formula
+
+link rico de info:
+http://spinroot.com/spin/Man/1_Exercises.html
+[] idefididamente
+<> frequente
